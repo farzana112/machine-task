@@ -28,7 +28,7 @@ const connectDB = async () => {
         }
        
         const conn = await mongoose.connect(url,{
-            useNewUrlParser:true,
+           
             
         });
 
