@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, isFulfilled } from "@reduxjs/toolkit";
 import userApi from "../api/userApi" ;
 
 export const Login = createAsyncThunk("login", async (payload) => {
@@ -24,7 +24,7 @@ export const Register=createAsyncThunk("register", async(payload) => {
   }
 })
 
-export const getAllUsers=createAsyncThunk("users", async(payload) => {
+export const GetAllUsers=createAsyncThunk("users", async(payload) => {
   try {
      console.log(payload)
     const response=await userApi.get("users",payload)
@@ -42,13 +42,31 @@ export const getAllUsers=createAsyncThunk("users", async(payload) => {
 
 const initialState = {
   user: {},
+  allUsers:[]
 };
 
 const userSlice = createSlice({
-  name: "admin",
+  name: "user",
   initialState,
-  reducers: {},
-  extraReducers: (builder) => {},
+  reducers: {
+    logOut:(state)=>{
+      console.log("logout")
+state.user=null
+    }
+  },
+  extraReducers: (builder) => {
+    builder.addCase(Login.fulfilled,(state,{payload})=> {
+      state.user=payload.user
+     
+      state.user.token=payload.token
+    })
+    .addCase(GetAllUsers.fulfilled,(state,{payload})=> {
+      console.log("loging users");
+      console.log(payload)
+      state.allUsers=payload.users
+      
+    })
+  },
 });
-// export const { } = seekerSlice.actions;
+export const { logOut} = userSlice.actions;
 export default userSlice.reducer;
